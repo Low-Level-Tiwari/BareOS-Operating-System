@@ -1,0 +1,18 @@
+export PICO_SDK_PATH=/root/sdk/pico-sdk
+export BAREOS_KERNEL_PATH=/root/sdk/bareOS-Kernel
+mkdir build
+cp -r $PICO_SDK_PATH/deps/* build/
+cd build
+cmake ../src/ -DPICO_BOARD=pico_w
+cd build
+make -j8
+#rm *.bin *.elf*  *.hex *.dis 
+ls -l *.uf2
+lsblk| grep -o 'sd[b-z]1' | sed 's:.*:mount /dev/& /mnt; cp *.uf2 /mnt;:e'
+sync;
+while :
+do
+	if [ -e /dev/ttyACM0 ]; then
+		cat /dev/ttyACM0;
+	fi
+done
